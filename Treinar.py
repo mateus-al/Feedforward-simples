@@ -21,4 +21,4 @@ y_train = y_train.view(y_train.shape[0], 1)
 y_test = y_test.view(y_test.shape[0], 1)
 
 aa = Treinar()
-aa.train(x_train, y_train, plot=True, epochs=1000)
+aa.train(x_train, y_train, epochs=1000, evo=True)

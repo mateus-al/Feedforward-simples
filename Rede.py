@@ -21,8 +21,9 @@ class Treinar:
         self.modelo = Sara()
         self.criterion = nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.modelo.parameters(), lr=0.0001)
+        self.accuracy_t = [[], []]
     
-    def train(self, inputs, outputs, plot:bool=False,  epochs : int = 500):
+    def train(self, inputs, outputs, plot:bool=False,  epochs : int = 500, evo:bool=False):
         for epoch in range(epochs):
             predicted = self.modelo(inputs)
             loss = self.criterion(predicted, outputs)
@@ -30,14 +31,22 @@ class Treinar:
 
             self.optimizer.step()
             self.optimizer.zero_grad()
-        
+
+            act = predicted.round()
+            acc = act.eq(outputs).sum() / float(outputs.shape[0])
+            self.accuracy_t[0].append(acc)
+            self.accuracy_t[1].append(epoch)
             if int((epoch+1) % (epochs/5)) == 0:
                 y_p = (predicted >= 0.6).float()
-                act = predicted.round()
-                acc = act.eq(outputs).sum() / float(outputs.shape[0])
-
-                
                 print(f"Epoch: {epoch+1}, Accuracy: {acc}, Loss:{loss.item():.4f}")
+        
+        if evo:
+            fig, ax = plt.subplots()
+            plt.plot(self.accuracy_t[1], self.accuracy_t[0])
+            plt.xlabel("Epochs")
+            plt.ylabel("Accuracy")
+            ax.set_ylim(0, 1.1)
+            plt.show()
         if plot:
                 plt.scatter(inputs[:,0], inputs[:,1], c=y_p, cmap='cool', alpha=0.5)
                 plt.show()
