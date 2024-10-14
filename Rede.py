@@ -6,12 +6,14 @@ class Sara(nn.Module):
         super().__init__()
         self.ln0 = nn.Linear(2, 32)
         self.ln1 = nn.Linear(32, 64)
-        self.ln2 = nn.Linear(64, 1)
+        self.ln2 = nn.Linear(64, 128)
+        self.ln3 = nn.Linear(128, 1)
         self.relu = nn.ReLU()
     def forward(self, x):
         x = self.relu(self.ln0(x))
         x = self.relu(self.ln1(x))
-        x = self.ln2(x)
+        x = self.relu(self.ln2(x))
+        x = self.ln3(x)
         return x
 
 class Treinar:
